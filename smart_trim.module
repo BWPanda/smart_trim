@@ -53,11 +53,11 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
 
         //add the link, if there is one!
         $uri = entity_uri($entity_type, $entity);
-        if ($uri && $display['settings']['more_text']) {
+        if ($uri && $display['settings']['more_link']) {
           $extension .= " " . l( $display['settings']['more_text'], $uri['path'], array('attributes' => array('class' => array('more-link'))));
         }
 
-        $output_appended = preg_replace('#^(.*)(\s?)(</[^>]+>)$#U', '$1' . $extension . '$3', $output);
+        $output_appended = preg_replace('#^(.*)(\s?)(</[^>]+>)$#Us', '$1' . $extension . '$3', $output);
 
         //check if the regex did anything. if not, append manually
         if ($output_appended == $output) $output_appended = $output . $extension;
