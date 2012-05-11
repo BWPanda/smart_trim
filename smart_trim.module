@@ -54,7 +54,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
         //add the link, if there is one!
         $uri = entity_uri($entity_type, $entity);
         if ($uri && $display['settings']['more_link']) {
-          $extension .= " " . l( $display['settings']['more_text'], $uri['path'], array('attributes' => array('class' => array('more-link'))));
+          $extension .= " " . l( $display['settings']['more_text'], $uri['path'], array('html' => TRUE, 'attributes' => array('class' => array('more-link'))));
         }
 
         $output_appended = preg_replace('#^(.*)(\s?)(</[^>]+>)$#Us', '$1' . $extension . '$3', $output);
