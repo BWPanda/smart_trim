@@ -7,4 +7,3 @@ package = Fields
 files[] = smart_trim.module
 dependencies[] = filter
 dependencies[] = text
-dependencies[] = field_ui
