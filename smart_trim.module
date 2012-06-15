@@ -12,9 +12,10 @@ function smart_trim_field_formatter_info() {
         'trim_length' => 300,
         'trim_type' => 'chars',
         'trim_suffix' => '...',
-        'trim_options' => array(),
         'more_link' => FALSE,
-        'more_text' => 'Read more'  //do we need this stuff?
+        'more_text' => 'Read more',
+        'summary_handler' => 'full',
+        'trim_options' => array(),
       ),
     )
   );
@@ -35,7 +36,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
         // The default behaviour is to use the main body field, but the summary
         // option allows users to use the summary field IFF it is not empty.
         $output = '';
-        if (!empty($settings['trim_options']) && !empty($settings['trim_options']['summary']) && !empty($item['summary'])) {
+        if (!empty($settings['summary_handler']) && $settings['summary_handler'] != 'ignore' && !empty($item['summary'])) {
           $output = _text_sanitize($instance, $langcode, $item, 'summary');
         }
         else {
@@ -44,24 +45,26 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
 
         $char_delta = drupal_strlen(trim($settings['trim_suffix']));
 
-        // Process additional processing options.
+        // Process additional options (currently only HTML on/off)
         if (!empty($settings['trim_options'])) {
           if (!empty($settings['trim_options']['text'])) {
             $output = trim(preg_replace('/\s+/', ' ', str_replace('&nbsp;', ' ', (strip_tags(str_replace('<', ' <', $output))))));
           }
         }
 
-        if ($settings['trim_type'] == 'words') {
-
-          $words = preg_split('/\s/', $output, NULL, PREG_SPLIT_NO_EMPTY); //use \s or use PREG_CLASS_UNICODE_WORD_BOUNDARY?
-          $output = implode(" ", array_slice($words, 0,  $settings['trim_length']));
-          $output = _filter_htmlcorrector($output);
-
-        }
-        else {
-          //See http://api.drupal.org/api/drupal/modules%21field%21modules%21text%21text.module/function/text_summary/7
-          //text_summary is smart about looking for paragraphs, sentences, etc, not strictly just length. Uses truncate_utf8 as well
-          $output = text_summary($output, $instance['settings']['text_processing'] ? $item['format'] : NULL, $settings['trim_length']);
+        //make the trim, provided we're not showing a full summary
+        if ($settings['summary_handler'] != 'full' && !empty($item['summary'])) {
+          if ($settings['trim_type'] == 'words') {
+            $words = preg_split('/\s/', $output, NULL, PREG_SPLIT_NO_EMPTY); //use \s or use PREG_CLASS_UNICODE_WORD_BOUNDARY?
+            $output = implode(" ", array_slice($words, 0,  $settings['trim_length']));
+            $output = _filter_htmlcorrector($output);
+  
+          }
+          else {
+            //See http://api.drupal.org/api/drupal/modules%21field%21modules%21text%21text.module/function/text_summary/7
+            //text_summary is smart about looking for paragraphs, sentences, etc, not strictly just length. Uses truncate_utf8 as well
+            $output = text_summary($output, $instance['settings']['text_processing'] ? $item['format'] : NULL, $settings['trim_length']);
+          }
         }
 
         $extension = $settings['trim_suffix'];
@@ -138,6 +141,19 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
     '#description' => t('If displaying more link, enter the text for the link.'),
   );
 
+  if ($field['type'] == 'text_with_summary'){
+    $element['summary_handler'] = array(
+      '#title' => t('Summary'),
+      '#type' => 'select',
+      '#options' => array(
+        'full' => t("Use summary if present, and do not trim"),
+        'trim' => t("Use summary if present, honor trim settings"),
+        'ignore' => t("Do not use summary"),
+      ),
+      '#default_value' => $settings['summary_handler'],
+    );
+  }
+
   $element['trim_options'] = array(
     '#title' => t('Additional options'),
     '#type' => 'checkboxes',
@@ -146,10 +162,6 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
     ),
     '#default_value' => empty($settings['trim_options']) ? array() : $settings['trim_options'],
   );
-
-  if ($field['type'] == 'text_with_summary'){
-    $element['trim_options']['#options']['summary'] = t('Use summary text if present');
-  }
 
   return $element;
 }
