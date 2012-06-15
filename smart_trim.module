@@ -112,16 +112,6 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
     '#default_value' => $settings['trim_type'],
   );
 
-  $element['trim_options'] = array(
-    '#title' => t('Additional options'),
-    '#type' => 'checkboxes',
-    '#options' => array(
-      'text' => t('Strip HTML'),
-      'summary' => t('Use summary text if available'),
-    ),
-    '#default_value' => empty($settings['trim_options']) ? array() : $settings['trim_options'],
-  );
-
   $element['trim_suffix'] = array(
     '#title' => t('Suffix'),
     '#type' => 'textfield',
@@ -147,6 +137,19 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
     '#default_value' => $settings['more_text'],
     '#description' => t('If displaying more link, enter the text for the link.'),
   );
+
+  $element['trim_options'] = array(
+    '#title' => t('Additional options'),
+    '#type' => 'checkboxes',
+    '#options' => array(
+      'text' => t('Strip HTML'),
+    ),
+    '#default_value' => empty($settings['trim_options']) ? array() : $settings['trim_options'],
+  );
+
+  if ($field['type'] == 'text_with_summary'){
+    $element['trim_options']['#options']['summary'] = t('Use summary text if present');
+  }
 
   return $element;
 }
