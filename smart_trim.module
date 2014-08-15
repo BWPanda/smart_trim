@@ -17,6 +17,7 @@ function smart_trim_field_formatter_info() {
         'more_text' => 'Read more',
         'summary_handler' => 'full',
         'trim_options' => array(),
+        'trim_preserve_tags' => '',
       ),
     )
   );
@@ -53,7 +54,8 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
         if (!empty($settings['trim_options'])) {
           if (!empty($settings['trim_options']['text'])) {
             // Strip tags
-            $output = strip_tags(str_replace('<', ' <', $output));
+            $preserve_tags = !empty($settings['trim_preserve_tags']) ? $settings['trim_preserve_tags'] : '';
+            $output = strip_tags(str_replace('<', ' <', $output), $preserve_tags);
 
             // Strip out line breaks
             $output = preg_replace('/\n|\r|\t/m', ' ', $output);
@@ -133,7 +135,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
         // If linking to content is selected the trimmed text will have tags
         // removed from the trimmed text. Need to find a more elegant way of
         // doing this without conflicting the other settings.
-        if ($settings['trim_link'] !== 0 && !empty($uri['path'])) {
+        if ($settings['trim_link'] != 0 && !empty($uri['path'])) {
           $output_appended = strip_tags($output_appended);
           $output = l($output_appended, $uri['path']);
           $element[$delta] = array(
@@ -238,6 +240,12 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
     '#default_value' => empty($settings['trim_options']) ? array() : $settings['trim_options'],
   );
 
+  $element['trim_preserve_tags'] = array(
+    '#title' => t('Tags to preserve'),
+    '#description' => t('Which tags to preserve if "Strip HTML" is chosen above. Format as "&lt;p&gt;&lt;a&gt;" to preserve p and a tags.'),
+    '#type' => 'textfield',
+    '#default_value' => $settings['trim_preserve_tags'],
+  );
   return $element;
 }
 
