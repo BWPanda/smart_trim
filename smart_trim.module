@@ -104,7 +104,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
               ), $output);
             }
             else {
-              // @see http://api.drupal.org/api/drupal/modules%21field%21modules%21text%21text.module/function/text_summary/7
+              // @see https://api.backdropcms.org/api/backdrop/core!modules!field!modules!text!text.module/function/text_summary/1
               // text_summary is smart about looking for paragraphs, sentences,
               // etc, not strictly just length. Uses truncate_utf8 as well.
               $output2 = text_summary($output, $instance['settings']['text_processing'] ? $item['format'] : NULL, $settings['trim_length']);
@@ -112,7 +112,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
           }
 
           // Verify if we actually performed any shortening.
-          if (drupal_strlen($output) != drupal_strlen($output2)) {
+          if (backdrop_strlen($output) != backdrop_strlen($output2)) {
             $shortened = TRUE;
           }
           $output = $output2;
@@ -267,7 +267,7 @@ function smart_trim_field_formatter_settings_summary($field, $instance, $view_mo
   $settings = $display['settings'];
 
   $summary = intval($settings['trim_length']) . ' ' . (($settings['trim_type'] == 'chars') ? t('characters') : t('words'));
-  if (drupal_strlen(trim($settings['trim_suffix']))) {
+  if (backdrop_strlen(trim($settings['trim_suffix']))) {
     $summary .= " " . t("with suffix");
   }
   if ($settings['more_link']) {

@@ -1,8 +1,11 @@
 name = Smart Trim
 description = Provides a more robust alternative to "summary or trimmed" textfield format
-core = 7.x
+backdrop = 1.x
 package = Fields
 
 files[] = smart_trim.module
 dependencies[] = filter
 dependencies[] = text
+
+type = module
+version = BACKDROP_VERSION
