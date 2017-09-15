@@ -96,6 +96,7 @@ function smart_trim_field_formatter_view($entity_type, $entity, $field, $instanc
           else {
             // Use views_trim_text() if available.
             if (module_exists('views')) {
+              views_include('utility');
               $output2 = views_trim_text(array(
                 'max_length' => $settings['trim_length'],
                 'word_boundary' => TRUE,
