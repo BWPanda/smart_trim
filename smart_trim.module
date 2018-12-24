@@ -185,11 +185,9 @@ function smart_trim_field_formatter_settings_form($field, $instance, $view_mode,
 
   $element['trim_length'] = array(
     '#title' => t('Trim length'),
-    '#type' => 'textfield',
-    '#size' => 10,
+    '#type' => 'number',
+    '#min' => 0,
     '#default_value' => $settings['trim_length'],
-    // Needs form.inc?
-    '#element_validate' => array('_element_validate_integer_positive'),
     '#required' => TRUE,
   );
 
