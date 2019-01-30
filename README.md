@@ -38,6 +38,7 @@ Current Maintainers
 -------------------
 
 - Said El fazni (https://github.com/fazni/)
+- opi (https://github.com/opi/)
 
 
 Credits
